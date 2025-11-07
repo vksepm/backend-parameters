@@ -25,7 +25,7 @@ def test_env_endpoint():
 
 
 def test_application_properties_from_configmap():
-    """Create a temp CONFIG_DIR with application.properties and verify app reads it."""
+    """Temp CONFIG_DIR; verify application.properties is read."""
     tmpdir = tempfile.mkdtemp()
     try:
         prop_path = os.path.join(tmpdir, 'application.properties')
@@ -35,21 +35,22 @@ def test_application_properties_from_configmap():
 
         # set CONFIG_DIR before importing app so it reads at import time
         os.environ['CONFIG_DIR'] = tmpdir
-        # reload the app module to pick up the config (import after setting env)
-        # import inside the test so the module picks up CONFIG_DIR set above
+        # reload the app module to pick up the config
+        # import inside test so module picks up CONFIG_DIR
         import app as app_module  # pylint: disable=import-outside-toplevel
         importlib.reload(app_module)
         client = app_module.app.test_client()
         resp = client.get('/env')
         assert resp.status_code == 200
         data = json.loads(resp.data)
-        assert data.get('application.properties.from.configmap') == content
+        key = 'application.properties.from.configmap'
+        assert data.get(key) == content
     finally:
         shutil.rmtree(tmpdir)
 
 
 def test_application_secret_properties_from_secret():
-    """Create a temp SECRET_CONFIG_DIR and verify secret file is read."""
+    """Temp SECRET_CONFIG_DIR; verify secret file is read."""
     tmpdir = tempfile.mkdtemp()
     try:
         secret_path = os.path.join(tmpdir, 'application.secret.properties')
@@ -65,6 +66,7 @@ def test_application_secret_properties_from_secret():
         resp = client.get('/env')
         assert resp.status_code == 200
         data = json.loads(resp.data)
-        assert data.get('application.secret.properties.from.secret') == secret_content
+        secret_key = 'application.secret.properties.from.secret'
+        assert data.get(secret_key) == secret_content
     finally:
         shutil.rmtree(tmpdir)
