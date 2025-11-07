@@ -5,7 +5,7 @@ import json
 import tempfile
 import shutil
 
-from app import app
+from app import app, APPLICATION_PROPERTIES_KEY, APPLICATION_SECRET_KEY
 
 
 def test_example():
@@ -43,8 +43,7 @@ def test_application_properties_from_configmap():
         resp = client.get('/env')
         assert resp.status_code == 200
         data = json.loads(resp.data)
-        key = 'application.properties.from.configmap'
-        assert data.get(key) == content
+        assert data.get(APPLICATION_PROPERTIES_KEY) == content
     finally:
         shutil.rmtree(tmpdir)
 
@@ -66,7 +65,6 @@ def test_application_secret_properties_from_secret():
         resp = client.get('/env')
         assert resp.status_code == 200
         data = json.loads(resp.data)
-        secret_key = 'application.secret.properties.from.secret'
-        assert data.get(secret_key) == secret_content
+        assert data.get(APPLICATION_SECRET_KEY) == secret_content
     finally:
         shutil.rmtree(tmpdir)
