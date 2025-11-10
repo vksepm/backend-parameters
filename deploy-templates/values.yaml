@@ -119,7 +119,7 @@ volumeMounts:
   readOnly: true
   mountPath: /secret-config
 
-env: 
+env:
 - name: BACKEND_PROFILES_ACTIVE
   value: dev
 - name: ENV_VAR1
