@@ -90,14 +90,55 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
+volumes:
+- name: configmap-volume
+  configMap:
+    name: cm-extra-config
+    items:
+      - key: application.properties
+        path: application.properties
+    defaultMode: 420
+- name: secret-volume
+  secret:
+    secretName: secret-extra-config
+    items:
+      - key: application.secret.properties
+        path: application.secret.properties
+    defaultMode: 420
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts:
+- name: configmap-volume
+  readOnly: true
+  mountPath: /config
+- name: secret-volume
+  readOnly: true
+  mountPath: /secret-config
+
+env: 
+- name: BACKEND_PROFILES_ACTIVE
+  value: dev
+- name: ENV_VAR1
+  valueFrom:
+    configMapKeyRef:
+      name: cm-extra-config
+      key: ENV_VAR1
+- name: ENV_VAR4
+  valueFrom:
+    secretKeyRef:
+      name: secret-extra-config
+      key: ENV_VAR4
+
+envFrom:
+- configMapRef:
+    name: cm-extra-env
+- secretRef:
+    name: secret-extra-env
+
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
