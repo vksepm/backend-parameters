@@ -9,7 +9,9 @@ data:
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: cm-extra-env
+  name: cm-extra-config
 data:
-  LOGGING_LEVEL_ROOT: INFO
-  SERVER_PORT: '8080'
+  ENV_VAR1: value1
+  application.properties: |
+    server.port=8080
+    logging.level.root=INFO
