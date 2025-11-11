@@ -91,20 +91,13 @@ autoscaling:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-- name: configmap-volume
-  configMap:
-    name: cm-extra-config
-    items:
-      - key: application.properties
-        path: application.properties
-    defaultMode: 420
-- name: secret-volume
+- name: ps-volume
   secret:
-    secretName: secret-extra-config
+    secretName: backend-parameters
     items:
-      - key: application.secret.properties
-        path: application.secret.properties
-    defaultMode: 420
+      - key: application.secret.properties.from.ps
+        path: application.secret.properties.from.ps
+
 # - name: foo
 #   secret:
 #     secretName: mysecret
@@ -112,36 +105,25 @@ volumes:
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
-- name: configmap-volume
+- name: ps-volume
   readOnly: true
-  mountPath: /config
-- name: secret-volume
-  readOnly: true
-  mountPath: /secret-config
+  mountPath: /ps-config
 
 env:
 - name: BACKEND_PROFILES_ACTIVE
   value: dev
-- name: ENV_VAR1
-  valueFrom:
-    configMapKeyRef:
-      name: cm-extra-config
-      key: ENV_VAR1
-- name: ENV_VAR4
+- name: ENV_VAR5
   valueFrom:
     secretKeyRef:
-      name: secret-extra-config
-      key: ENV_VAR4
+      name: backend-parameters
+      key: ENV_VAR5
 
-envFrom:
-- configMapRef:
-    name: cm-extra-env
-- secretRef:
-    name: secret-extra-env
+# envFrom:
+# - configMapRef:
+#     name: cm-extra-env
+# - secretRef:
+#     name: secret-extra-env
 
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
 
 # -- https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
 nodeSelector: {}
