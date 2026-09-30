@@ -13,6 +13,15 @@ def test_example():
     assert True
 
 
+def test_health_endpoint():
+    """Test that /health returns an ok status."""
+    client = app.test_client()
+    resp = client.get('/health')
+    assert resp.status_code == 200
+    data = json.loads(resp.data)
+    assert data.get('status') == 'ok'
+
+
 def test_env_endpoint():
     """Test that /env returns environment variables as JSON."""
     # set a known env var for the test
