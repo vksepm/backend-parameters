@@ -55,6 +55,12 @@ def hello_world():
     return 'Hello, EDP!'
 
 
+@app.route('/health')
+def health():
+    """Returns the service health status as JSON."""
+    return jsonify({'status': 'ok'})
+
+
 @app.route('/env')
 def env():
     """Return all environment variables as JSON."""
